@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flask Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #chatbox { height: 300px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; }
+        .user { color: blue; margin: 5px 0; }
+        .bot { color: green; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <h2>Chatbot 🤖</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatbox = document.getElementById("chatbox");
+            chatbox.innerHTML += `<div class="user"><strong>You:</strong> ${message}</div>`;
+
+            const response = await fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            });
+
+            const data = await response.json();
+            chatbox.innerHTML += `<div class="bot"><strong>Bot:</strong> ${data.reply}</div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+            input.value = "";
+        }
+    </script>
+</body>
+</html>
